@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Yehia Mohamed — Infrastructure &amp; Security Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A0E13;
+    --panel:#101820;
+    --panel-2:#141D26;
+    --line:#1E2A34;
+    --text:#E7EEF3;
+    --text-dim:#8CA0AC;
+    --text-faint:#5C6E79;
+    --accent:#3FE7C6;
+    --accent-dim:#245b52;
+    --accent-glow:rgba(63,231,198,0.18);
+    --danger:#ff6b6b;
+    --mono:'JetBrains Mono', monospace;
+    --sans:'Inter', sans-serif;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--sans);
+    line-height:1.6;
+    overflow-x:hidden;
+  }
+  ::selection{background:var(--accent); color:#04110d;}
+
+  /* Background grid texture */
+  .grid-bg{
+    position:fixed; inset:0; z-index:0; pointer-events:none;
+    background-image:
+      linear-gradient(rgba(63,231,198,0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(63,231,198,0.035) 1px, transparent 1px);
+    background-size:42px 42px;
+    mask-image:radial-gradient(ellipse 80% 60% at 50% 0%, #000 40%, transparent 100%);
+  }
+
+  section{
+    position:relative;
+    z-index:1;
+    padding:120px 8vw;
+    border-bottom:1px solid var(--line);
+  }
+  @media (max-width:768px){ section{padding:80px 6vw;} }
+
+  .eyebrow{
+    font-family:var(--mono);
+    font-size:13px;
+    color:var(--accent);
+    letter-spacing:0.08em;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:18px;
+  }
+  .eyebrow::before{ content:"$"; color:var(--text-faint); }
+  .eyebrow .cursor{
+    display:inline-block; width:7px; height:14px; background:var(--accent);
+    animation:blink 1.1s steps(1) infinite;
+  }
+  @keyframes blink{ 50%{opacity:0;} }
+
+  h1,h2,h3{ font-family:var(--mono); font-weight:700; letter-spacing:-0.01em; }
+  h2{ font-size:clamp(28px,3.4vw,42px); color:var(--text); margin-bottom:46px; }
+  h2 .num{ color:var(--text-faint); font-weight:500; }
+
+  p{ color:var(--text-dim); font-size:16px; max-width:70ch; }
+
+  /* ---------- NAV ---------- */
+  nav{
+    position:fixed; top:0; left:0; right:0; z-index:50;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:20px 8vw;
+    background:rgba(10,14,19,0.75);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  nav .brand{ font-family:var(--mono); font-weight:700; font-size:14px; color:var(--text); }
+  nav .brand span{ color:var(--accent); }
+  nav ul{ list-style:none; display:flex; gap:28px; }
+  nav ul li a{
+    color:var(--text-dim); text-decoration:none; font-family:var(--mono); font-size:12.5px;
+    letter-spacing:0.04em; transition:color .2s;
+  }
+  nav ul li a:hover{ color:var(--accent); }
+  @media (max-width:900px){ nav ul{ display:none; } }
+
+  /* ---------- COVER ---------- */
+  .cover{
+    min-height:100vh;
+    display:flex; flex-direction:column; justify-content:center;
+    padding-top:160px;
+    border-bottom:1px solid var(--line);
+  }
+  .cover-tag{
+    font-family:var(--mono); color:var(--text-faint); font-size:13px;
+    margin-bottom:28px; display:flex; align-items:center; gap:14px;
+  }
+  .cover-tag .dot{ width:8px; height:8px; border-radius:50%; background:var(--accent); box-shadow:0 0 12px var(--accent); }
+  .cover h1{
+    font-size:clamp(40px,7vw,84px);
+    line-height:1.02;
+    color:var(--text);
+  }
+  .cover h1 .accent{ color:var(--accent); }
+  .cover .role{
+    font-family:var(--sans); font-weight:600; font-size:clamp(17px,2vw,22px);
+    color:var(--text-dim); margin-top:22px; max-width:640px;
+  }
+  .cover .desc{ margin-top:20px; font-size:16px; max-width:560px; }
+  .cover-meta{
+    margin-top:56px; display:flex; flex-wrap:wrap; gap:34px;
+    font-family:var(--mono); font-size:13px; color:var(--text-dim);
+  }
+  .cover-meta a{ color:var(--text-dim); text-decoration:none; border-bottom:1px dashed var(--line); padding-bottom:2px; }
+  .cover-meta a:hover{ color:var(--accent); border-color:var(--accent); }
+  .terminal{
+    margin-top:60px; max-width:560px;
+    background:var(--panel); border:1px solid var(--line); border-radius:8px;
+    overflow:hidden; box-shadow:0 20px 60px rgba(0,0,0,0.4);
+  }
+  .terminal-head{
+    display:flex; align-items:center; gap:8px;
+    padding:10px 14px; background:var(--panel-2); border-bottom:1px solid var(--line);
+  }
+  .terminal-head span{ width:10px; height:10px; border-radius:50%; background:#3a4750; }
+  .terminal-head .label{ margin-left:8px; font-family:var(--mono); font-size:11.5px; color:var(--text-faint); }
+  .terminal-body{ padding:18px 20px; font-family:var(--mono); font-size:13.5px; color:var(--text-dim); }
+  .terminal-body .line{ margin-bottom:6px; }
+  .terminal-body .prompt{ color:var(--accent); }
+  .terminal-body .out{ color:var(--text); }
+
+  /* ---------- ABOUT ---------- */
+  .about-wrap{ display:grid; grid-template-columns:1.1fr 0.9fr; gap:60px; align-items:start; }
+  @media (max-width:900px){ .about-wrap{ grid-template-columns:1fr; } }
+  .about-wrap p{ font-size:17px; max-width:none; }
+  .about-wrap p + p{ margin-top:16px; }
+  .stat-panel{
+    background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:28px;
+  }
+  .stat-row{ display:flex; justify-content:space-between; padding:14px 0; border-bottom:1px solid var(--line); }
+  .stat-row:last-child{ border-bottom:none; }
+  .stat-row .k{ font-family:var(--mono); font-size:12.5px; color:var(--text-faint); }
+  .stat-row .v{ font-family:var(--mono); font-size:13.5px; color:var(--accent); text-align:right; }
+
+  /* ---------- EDUCATION ---------- */
+  .edu-card{
+    background:var(--panel); border:1px solid var(--line); border-radius:10px;
+    padding:32px; display:flex; gap:26px; align-items:flex-start;
+    max-width:820px;
+  }
+  .edu-icon{
+    flex:none; width:46px; height:46px; border-radius:8px; background:var(--accent-glow);
+    display:flex; align-items:center; justify-content:center; border:1px solid var(--accent-dim);
+  }
+  .edu-card h3{ font-size:18px; color:var(--text); margin-bottom:6px; }
+  .edu-card .school{ color:var(--accent); font-family:var(--mono); font-size:13px; margin-bottom:10px; }
+  .edu-card .meta{ font-family:var(--mono); font-size:12.5px; color:var(--text-faint); }
+
+  /* ---------- SKILLS ---------- */
+  .skills-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:24px; }
+  @media (max-width:900px){ .skills-grid{ grid-template-columns:1fr; } }
+  .skill-card{
+    background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:26px;
+  }
+  .skill-card .head{ display:flex; align-items:center; gap:10px; margin-bottom:18px; }
+  .skill-card .head .ico{ width:30px; height:30px; }
+  .skill-card h3{ font-size:15px; color:var(--text); }
+  .tag-list{ display:flex; flex-wrap:wrap; gap:8px; }
+  .tag{
+    font-family:var(--mono); font-size:11.5px; color:var(--text-dim);
+    border:1px solid var(--line); border-radius:5px; padding:6px 10px;
+    background:var(--panel-2); transition:all .2s;
+  }
+  .tag:hover{ border-color:var(--accent); color:var(--accent); }
+
+  /* ---------- EXPERIENCE ---------- */
+  .exp-item{
+    position:relative; padding-left:32px; padding-bottom:44px;
+    border-left:1px solid var(--line); margin-left:6px;
+  }
+  .exp-item:last-child{ padding-bottom:0; }
+  .exp-item::before{
+    content:""; position:absolute; left:-6px; top:2px; width:11px; height:11px;
+    border-radius:50%; background:var(--bg); border:2px solid var(--accent);
+  }
+  .exp-head{ display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px; margin-bottom:10px; }
+  .exp-head h3{ font-size:17px; color:var(--text); }
+  .exp-head .company{ color:var(--accent); font-family:var(--mono); font-size:13px; }
+  .exp-head .period{ font-family:var(--mono); font-size:12.5px; color:var(--text-faint); white-space:nowrap; }
+  .exp-item ul{ margin-top:12px; padding-left:18px; color:var(--text-dim); }
+  .exp-item ul li{ margin-bottom:8px; font-size:15px; }
+  .exp-item ul li::marker{ color:var(--accent); }
+
+  /* ---------- SERVICES ---------- */
+  .services-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:22px; }
+  @media (max-width:900px){ .services-grid{ grid-template-columns:1fr; } }
+  .service-card{
+    background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:28px;
+    transition:border-color .2s, transform .2s;
+  }
+  .service-card:hover{ border-color:var(--accent-dim); transform:translateY(-3px); }
+  .service-card .idx{ font-family:var(--mono); color:var(--text-faint); font-size:12px; margin-bottom:14px; }
+  .service-card h3{ font-size:16.5px; color:var(--text); margin-bottom:10px; }
+  .service-card p{ font-size:14.5px; }
+
+  /* ---------- PROJECTS ---------- */
+  .project-card{
+    background:var(--panel); border:1px solid var(--line); border-radius:12px;
+    padding:32px; margin-bottom:22px;
+  }
+  .project-head{ display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:10px; margin-bottom:20px; }
+  .project-head h3{ font-size:19px; color:var(--text); }
+  .project-link{
+    color:var(--text); text-decoration:none; display:inline-flex; align-items:center; gap:9px;
+    transition:color .2s;
+  }
+  .project-link:hover{ color:var(--accent); }
+  .project-link svg{ flex:none; opacity:0.6; transition:opacity .2s, transform .2s; }
+  .project-link:hover svg{ opacity:1; transform:translate(2px,-2px); }
+  .project-sub{ font-family:var(--mono); font-size:11px; color:var(--text-faint); margin-top:6px; letter-spacing:0.04em; }
+  .project-head .stack{ font-family:var(--mono); font-size:11.5px; color:var(--accent); text-align:right; }
+  .pao{ display:grid; grid-template-columns:repeat(3,1fr); gap:22px; }
+  @media (max-width:900px){ .pao{ grid-template-columns:1fr; } }
+  .pao .col span{ display:block; font-family:var(--mono); font-size:11px; color:var(--text-faint); letter-spacing:0.06em; margin-bottom:8px; }
+  .pao .col p{ font-size:14.5px; max-width:none; }
+
+  /* ---------- CTA ---------- */
+  .cta{
+    text-align:center; padding:140px 8vw;
+    background:radial-gradient(ellipse at 50% 0%, var(--accent-glow), transparent 60%);
+  }
+  .cta h2{ margin-bottom:18px; }
+  .cta p{ margin:0 auto 40px; }
+  .btn-row{ display:flex; gap:16px; justify-content:center; flex-wrap:wrap; }
+  .btn{
+    font-family:var(--mono); font-size:14px; padding:14px 28px; border-radius:6px;
+    text-decoration:none; letter-spacing:0.02em; transition:all .2s; border:1px solid transparent;
+  }
+  .btn-primary{ background:var(--accent); color:#04120e; font-weight:700; }
+  .btn-primary:hover{ box-shadow:0 0 30px var(--accent-glow); transform:translateY(-2px); }
+  .btn-ghost{ border-color:var(--line); color:var(--text); }
+  .btn-ghost:hover{ border-color:var(--accent); color:var(--accent); }
+
+  /* ---------- THANK YOU / FOOTER ---------- */
+  footer{
+    padding:70px 8vw 40px; text-align:center; border-bottom:none;
+  }
+  footer .thanks{ font-family:var(--mono); font-size:22px; color:var(--text); margin-bottom:14px; }
+  footer .thanks .accent{ color:var(--accent); }
+  footer .contact-row{
+    display:flex; justify-content:center; gap:30px; flex-wrap:wrap; margin:30px 0 50px;
+    font-family:var(--mono); font-size:13px;
+  }
+  footer .contact-row a{ color:var(--text-dim); text-decoration:none; }
+  footer .contact-row a:hover{ color:var(--accent); }
+  footer .foot-line{ color:var(--text-faint); font-size:12px; font-family:var(--mono); }
+
+  .reveal{ opacity:0; transform:translateY(24px); transition:opacity .7s ease, transform .7s ease; }
+  .reveal.in{ opacity:1; transform:translateY(0); }
+</style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+
+<nav>
+  <div class="brand">YEHIA<span>.</span>MOHAMED</div>
+  <ul>
+    <li><a href="#about">about</a></li>
+    <li><a href="#education">education</a></li>
+    <li><a href="#skills">skills</a></li>
+    <li><a href="#experience">experience</a></li>
+    <li><a href="#services">services</a></li>
+    <li><a href="#projects">projects</a></li>
+    <li><a href="#contact">contact</a></li>
+  </ul>
+</nav>
+
+<!-- COVER -->
+<section class="cover" id="cover">
+  <div class="cover-tag"><span class="dot"></span> STATUS: ACTIVE — OPEN TO OPPORTUNITIES</div>
+  <h1>Yehia Mohamed</h1>
+  <div class="role">Infrastructure &amp; Security Portfolio</div>
+  <p class="desc">Cybersecurity professional specializing in offensive security, penetration testing, and enterprise network architecture — with hands-on experience identifying vulnerabilities, executing controlled exploitation, and hardening infrastructure across live internships and independent security engagements.</p>
+
+  <div class="terminal">
+    <div class="terminal-head">
+      <span></span><span></span><span></span>
+      <div class="label">yehia@secure-shell — profile.sh</div>
+    </div>
+    <div class="terminal-body">
+      <div class="line"><span class="prompt">$</span> whoami</div>
+      <div class="line out">Cybersecurity &amp; Network Security Student, The British University in Egypt</div>
+      <div class="line"><span class="prompt">$</span> focus</div>
+      <div class="line out">Penetration Testing · Network Architecture · Mobile App Security</div>
+      <div class="line"><span class="prompt">$</span> location</div>
+      <div class="line out">Cairo, Egypt</div>
+    </div>
+  </div>
+
+  <div class="cover-meta">
+    <a href="mailto:yehiamohamed.kh@gmail.com">yehiamohamed.kh@gmail.com</a>
+    <a href="tel:01211442971">01211442971</a>
+    <a href="https://linkedin.com/in/yehia-mohamed-952700293" target="_blank">linkedin.com/in/yehia-mohamed-952700293</a>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="eyebrow">cat about.md <span class="cursor"></span></div>
+  <h2><span class="num">01 /</span> About</h2>
+  <div class="about-wrap">
+    <div class="reveal">
+      <p>I specialize in offensive security, penetration testing, and enterprise network architecture, with hands-on experience assessing web and mobile applications, executing privilege escalation, and translating technical risk into business impact that stakeholders can act on. My background spans a penetration testing internship at IP Protocol INC and a technology internship at CIB Egypt, where I worked across application security, AI governance, and financial-sector security controls.</p>
+      <p>I work hands-on with mobile application security, dynamic instrumentation, and network infrastructure — using tools like Kali Linux, Burp Suite, and Frida to assess real attack surfaces rather than theoretical ones. I approach security as a discipline of architecture as much as attack: understanding how systems are built is what makes it possible to secure them properly.</p>
+    </div>
+    <div class="stat-panel reveal">
+      <div class="stat-row"><span class="k">BACKGROUND</span><span class="v">BSc Cybersecurity, Informatics &amp; CS</span></div>
+      <div class="stat-row"><span class="k">INSTITUTION</span><span class="v">BUE &amp; London South Bank University</span></div>
+      <div class="stat-row"><span class="k">SPECIALIZATION</span><span class="v">Offensive Security / Networks</span></div>
+      <div class="stat-row"><span class="k">CURRENT ROLE</span><span class="v">Penetration Testing Intern</span></div>
+      <div class="stat-row"><span class="k">BASE</span><span class="v">Cairo, Egypt</span></div>
+      <div class="stat-row"><span class="k">LANGUAGES</span><span class="v">Arabic · English · Spanish · French</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- EDUCATION -->
+<section id="education">
+  <div class="eyebrow">cat education.log <span class="cursor"></span></div>
+  <h2><span class="num">02 /</span> Education</h2>
+  <div class="edu-card reveal">
+    <div class="edu-icon">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3FE7C6" stroke-width="1.6"><path d="M12 3l9 4.5-9 4.5-9-4.5L12 3z"/><path d="M6 10.5v5c0 1.5 3 3 6 3s6-1.5 6-3v-5"/></svg>
+    </div>
+    <div>
+      <h3>Bachelor's Degree in Cybersecurity, Informatics and Computer Science</h3>
+      <div class="school">The British University in Egypt (BUE) &amp; London South Bank University</div>
+      <div class="meta">2023 — Present &nbsp;·&nbsp; Cairo, Egypt</div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="eyebrow">ls -la ./skills <span class="cursor"></span></div>
+  <h2><span class="num">03 /</span> Skills</h2>
+  <div class="skills-grid">
+    <div class="skill-card reveal">
+      <div class="head">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="#3FE7C6" stroke-width="1.6"><rect x="3" y="4" width="18" height="6" rx="1"/><rect x="3" y="14" width="18" height="6" rx="1"/><circle cx="7" cy="7" r="0.6" fill="#3FE7C6"/><circle cx="7" cy="17" r="0.6" fill="#3FE7C6"/></svg>
+        <h3>Infrastructure</h3>
+      </div>
+      <div class="tag-list">
+        <span class="tag">TCP/IP</span>
+        <span class="tag">Linux Administration</span>
+        <span class="tag">LAN Design</span>
+        <span class="tag">VLANs &amp; Segmentation</span>
+        <span class="tag">DHCP / DNS</span>
+        <span class="tag">ACL Configuration</span>
+        <span class="tag">Cisco Packet Tracer</span>
+        <span class="tag">Cloud Foundations (AWS)</span>
+      </div>
+    </div>
+    <div class="skill-card reveal">
+      <div class="head">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="#3FE7C6" stroke-width="1.6"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3z"/></svg>
+        <h3>Security</h3>
+      </div>
+      <div class="tag-list">
+        <span class="tag">Penetration Testing</span>
+        <span class="tag">Vulnerability Assessment</span>
+        <span class="tag">Mobile App Security</span>
+        <span class="tag">OSINT</span>
+        <span class="tag">SQLi / XSS Testing</span>
+        <span class="tag">Privilege Escalation</span>
+        <span class="tag">CVSS Scoring</span>
+        <span class="tag">Security Management</span>
+      </div>
+    </div>
+    <div class="skill-card reveal">
+      <div class="head">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="#3FE7C6" stroke-width="1.6"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg>
+        <h3>Tools &amp; Certifications</h3>
+      </div>
+      <div class="tag-list">
+        <span class="tag">Kali Linux</span>
+        <span class="tag">Burp Suite</span>
+        <span class="tag">Wireshark</span>
+        <span class="tag">Nmap</span>
+        <span class="tag">Metasploit</span>
+        <span class="tag">Frida</span>
+        <span class="tag">Genymotion / Android Studio</span>
+        <span class="tag">Jadx</span>
+        <span class="tag">AWS Academy — Cloud Foundations</span>
+        <span class="tag">CIB GenAI Certificate</span>
+        <span class="tag">ITI / Mahara-Tech Cybersecurity Academy</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="eyebrow">tail -f experience.log <span class="cursor"></span></div>
+  <h2><span class="num">04 /</span> Experience</h2>
+
+  <div class="exp-item reveal">
+    <div class="exp-head">
+      <div>
+        <h3>Penetration Testing Intern</h3>
+        <div class="company">IP Protocol INC</div>
+      </div>
+      <div class="period">07/2026 — Present</div>
+    </div>
+    <ul>
+      <li>Conduct comprehensive security assessments on web and mobile applications to identify, exploit, and document critical vulnerabilities.</li>
+      <li>Configure and manage mobile penetration testing environments using Genymotion and Android Studio for Android application emulation.</li>
+      <li>Deploy dynamic instrumentation tools including Frida to execute hooks, inspect runtime memory, and analyze internal components via Jadx.</li>
+      <li>Evaluate Android application architecture and sandboxed environments to map attack surfaces and bypass client-side security controls.</li>
+    </ul>
+  </div>
+
+  <div class="exp-item reveal">
+    <div class="exp-head">
+      <div>
+        <h3>Summer Intern (Remote)</h3>
+        <div class="company">CIB Egypt</div>
+      </div>
+      <div class="period">07/2026 — 08/2026</div>
+    </div>
+    <ul>
+      <li>Completed an intensive technology program covering the integration of Generative AI, data analysis, and cybersecurity within the financial sector.</li>
+      <li>Analyzed real-world banking applications to map AI governance, fraud risk management, and open banking concepts to modern security architectures.</li>
+      <li>Built a holistic understanding of banking controls, financial inclusion initiatives, and the role of security in protecting the end-user experience.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="eyebrow">./run_services.sh <span class="cursor"></span></div>
+  <h2><span class="num">05 /</span> Services</h2>
+  <div class="services-grid">
+    <div class="service-card reveal">
+      <div class="idx">SRV_01</div>
+      <h3>Web &amp; Mobile Application Penetration Testing</h3>
+      <p>Manual and tool-assisted assessment of web and Android applications to uncover injection flaws, authentication weaknesses, and insecure runtime behavior.</p>
+    </div>
+    <div class="service-card reveal">
+      <div class="idx">SRV_02</div>
+      <h3>Vulnerability Assessment &amp; Reporting</h3>
+      <p>Structured identification and CVSS-based prioritization of vulnerabilities, delivered as clear, business-ready reports for technical and non-technical stakeholders.</p>
+    </div>
+    <div class="service-card reveal">
+      <div class="idx">SRV_03</div>
+      <h3>Network Design &amp; Security Hardening</h3>
+      <p>Design and configuration of segmented LAN environments — VLANs, DHCP/DNS, and ACLs — built around the principle of least-privilege access.</p>
+    </div>
+    <div class="service-card reveal">
+      <div class="idx">SRV_04</div>
+      <h3>OSINT &amp; Reconnaissance</h3>
+      <p>Open-source intelligence gathering to map external exposure and attack surface ahead of a formal engagement or security review.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="eyebrow">grep -r "impact" ./projects <span class="cursor"></span></div>
+  <h2><span class="num">06 /</span> Projects</h2>
+
+  <div class="project-card reveal">
+    <div class="project-head">
+      <div>
+        <h3>
+          <a class="project-link" href="https://drive.google.com/drive/folders/1PXLP967i9RqA9eU03d6PGAo-MXNKtUmj?usp=drive_link" target="_blank" rel="noopener">
+            Penetration Testing &amp; Ethical Hacking Lab
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M7 7h10v10"/></svg>
+          </a>
+        </h3>
+        <div class="project-sub">FULL REPORT — GOOGLE DRIVE</div>
+      </div>
+      <div class="stack">Burp Suite · Manual Testing · CVSS</div>
+    </div>
+    <div class="pao">
+      <div class="col"><span>PROBLEM</span><p>Applications in a controlled lab environment needed a full-scope security assessment following recognized industry methodology.</p></div>
+      <div class="col"><span>APPROACH</span><p>Tested web applications for SQL Injection, XSS, and authentication weaknesses, then performed privilege escalation to reach root/system-level access.</p></div>
+      <div class="col"><span>OUTCOME</span><p>Delivered a prioritized set of findings scored against CVSS, demonstrating end-to-end penetration testing methodology from recon to reporting.</p></div>
+    </div>
+  </div>
+
+  <div class="project-card reveal">
+    <div class="project-head">
+      <div>
+        <h3>
+          <a class="project-link" href="https://drive.google.com/drive/folders/1VJEDbsOukiHVc7B-QNOjp0gxqqRUKPsf?usp=drive_link" target="_blank" rel="noopener">
+            Enterprise LAN Design
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M7 7h10v10"/></svg>
+          </a>
+        </h3>
+        <div class="project-sub">PACKET TRACER FILE + REPORT — GOOGLE DRIVE</div>
+      </div>
+      <div class="stack">Cisco Packet Tracer · VLANs · ACLs</div>
+    </div>
+    <div class="pao">
+      <div class="col"><span>PROBLEM</span><p>An enterprise network needed a scalable, segmented architecture with controlled access between zones.</p></div>
+      <div class="col"><span>APPROACH</span><p>Designed and implemented the network in Cisco Packet Tracer, configuring VLANs, DHCP, DNS, and web servers, then applied ACLs across segments.</p></div>
+      <div class="col"><span>OUTCOME</span><p>A functioning, segmented enterprise LAN with enforced access control — a working model of security-by-design at the network layer.</p></div>
+    </div>
+  </div>
+
+</section>
+
+<!-- CTA -->
+<section class="cta" id="cta">
+  <div class="eyebrow" style="justify-content:center;">./contact --initiate <span class="cursor"></span></div>
+  <h2>Let's secure something together.</h2>
+  <p>Open to penetration testing internships, network security roles, and collaborative security research. If you're building something that needs to be tested, hardened, or defended — let's talk.</p>
+  <div class="btn-row">
+    <a class="btn btn-primary" href="mailto:yehiamohamed.kh@gmail.com">Send a Message</a>
+    <a class="btn btn-ghost" href="https://linkedin.com/in/yehia-mohamed-952700293" target="_blank">Connect on LinkedIn</a>
+  </div>
+</section>
+
+<!-- THANK YOU / FOOTER -->
+<footer id="contact">
+  <div class="thanks">Thank <span class="accent">you</span>.</div>
+  <p style="max-width:480px; margin:0 auto;">Appreciate you taking the time to review my work. I'm always glad to walk through any project in more depth.</p>
+  <div class="contact-row">
+    <a href="mailto:yehiamohamed.kh@gmail.com">yehiamohamed.kh@gmail.com</a>
+    <a href="tel:01211442971">01211442971</a>
+    <a href="https://linkedin.com/in/yehia-mohamed-952700293" target="_blank">LinkedIn</a>
+    <span>Cairo, Egypt</span>
+  </div>
+  <div class="foot-line">// end of file — yehia_mohamed_portfolio.html</div>
+</footer>
+
+<script>
+  const revealEls = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold: 0.15 });
+  revealEls.forEach(el=>io.observe(el));
+</script>
+
+</body>
+</html>
